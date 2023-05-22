@@ -3,57 +3,83 @@ const todoButtonElement = document.querySelector("#addTodoButton");
 const todoListElement = document.querySelector("#todoItems");
 
 let todoItems = [];
-let eraseItems = [];
 
 function clickFunction() {
 
     const todoItem = {
         title: todoTitleInput.value,
         id: crypto.randomUUID(),
+        isCompleted: false,
     }
+
+    todoTitleInput.value = ""
+
     todoItems.push(todoItem);
 
-    todoListElement.innerHTML = ""//reset
+    reset();
 
     renderFunction();
 
 };
 todoButtonElement.addEventListener("click", clickFunction);
 
-// [{id: "fdd"} , {id: "dsfvd"}] O
-// ["vdfv", "csdvd"] X
 
 function getListItemIndexById(listItems, id) {
 
     let targetItemIndex = -1;
-    
     for (let index = 0; index < listItems.length; index++) {
         const item = listItems[index];
-
         if(item.id === id) {
             targetItemIndex = index;
-            return;
         } 
+        
     }
-
     return targetItemIndex;
 }
  function renderFunction(){
     for (i = 0; i < todoItems.length; i++) {
     let item = document.createElement('li');
     const todoItem = todoItems[i];
-    item.innerHTML = todoItem.title;
+    let itemTitle = document.createElement('p');
+    itemTitle.innerHTML = todoItem.title;
+    item.appendChild(itemTitle);
 
-    item.addEventListener("click", () => {
+    let deleteButton = document.createElement('button');
+    deleteButton.innerHTML = "delete";
+    deleteButton.addEventListener("click", () => {
         const targetIndex = getListItemIndexById(todoItems, todoItem.id)
         todoItems.splice(targetIndex, 1);
-        todoListElement.innerHTML = "";
+        reset();
         renderFunction();
     })
+    item.appendChild(deleteButton);
+    let completeButton = document.createElement('button');
+    completeButton.innerHTML = "complete";
+    completeButton.addEventListener("click", () => {
+
+       
+        const targetIndex = getListItemIndexById(todoItems, todoItem.id)
+    todoItems[targetIndex].isCompleted = true;
+    reset();
+    renderFunction();
+})
+item.appendChild(completeButton);
+
+    if (todoItem.isCompleted){
+        item.setAttribute("class","is-completed");//htmlにアトリビュート追加
+    }
+
+ 
+
 
 
     todoListElement.appendChild(item);
  }
  }
-//fix
 
+ function reset(){
+    todoListElement.innerHTML = "";
+ }
+
+
+//copmleted = false
